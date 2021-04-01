@@ -1,0 +1,17 @@
+syntax = "proto2";
+
+package proto;
+
+message Client {
+    required string id = 1;
+    required string nome = 2;
+};
+
+message MedicalAppointment {
+    required Client client = 1;
+    required string date_time = 2;
+};
+
+message MedicalAppointmentList {
+    repeated MedicalAppointment medical_appointments = 1;
+};
