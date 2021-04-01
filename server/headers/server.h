@@ -16,7 +16,7 @@
 class Server
 {
 public:
-    std::string getRequest();
+    void getRequest();
     void sendResponse();
 
 private:

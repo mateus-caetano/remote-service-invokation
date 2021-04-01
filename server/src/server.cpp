@@ -1,6 +1,6 @@
 #include "../headers/server.h"
 
-std::string Server::getRequest()
+void Server::getRequest()
 {
     char buffer[MAXLINE];
     proto::Client client;
@@ -15,7 +15,7 @@ std::string Server::getRequest()
     memset(&cliaddr, 0, sizeof(cliaddr));
 
     servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    servaddr.sin_addr.s_addr = INADDR_ANY;
     servaddr.sin_port = htons(PORT);
 
     if (bind(sockfd, (const struct sockaddr *)&servaddr,
@@ -27,16 +27,20 @@ std::string Server::getRequest()
 
     int n;
     socklen_t len;
+    while (true)
+    {
+        len = sizeof(cliaddr);
 
-    len = sizeof(cliaddr);
+        n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+                     MSG_WAITALL, (struct sockaddr *)&cliaddr,
+                     &len);
 
-    n = recvfrom(sockfd, (char *)buffer, MAXLINE,
-                 MSG_WAITALL, (struct sockaddr *)&cliaddr,
-                 &len);
+        client.ParseFromString(buffer);
 
-    client.ParseFromString(buffer);
+        std::cout << "Client : {id: " << client.id() << ", nome: " << client.nome() << "}" << std::endl;
 
-    std::cout << "Client : {id: " << client.id() << ", nome: " << client.nome() << "}" << std::endl;
+        sendResponse();
+    }
 }
 
 void Server::sendResponse()
