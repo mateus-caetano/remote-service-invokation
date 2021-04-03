@@ -5,11 +5,14 @@
 
 class Proxy
 {
-
 public:
+    enum Method
+    {
+        LIST = 0,
+        SCHEDULE,
+        DELETE
+    };
     proto::MedicalAppointmentList listMedicalAppointment(proto::Client);
     proto::MedicalAppointment scheduleMedicalAppointment(proto::MedicalAppointment);
     proto::MedicalAppointment deleteMedicalAppointment(proto::MedicalAppointment);
-
-private:
 };

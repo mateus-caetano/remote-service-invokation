@@ -3,7 +3,8 @@
 void Server::getRequest()
 {
     char buffer[MAXLINE];
-    proto::Client client;
+    socklen_t len;
+    std::string remoteMethod, response;
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
@@ -25,27 +26,28 @@ void Server::getRequest()
         exit(EXIT_FAILURE);
     }
 
-    int n;
-    socklen_t len;
+    std::cout << "server is running..." << std::endl
+              << std::endl;
+
     while (true)
     {
         len = sizeof(cliaddr);
 
-        n = recvfrom(sockfd, (char *)buffer, MAXLINE,
-                     MSG_WAITALL, (struct sockaddr *)&cliaddr,
-                     &len);
+        recvfrom(sockfd, (char *)buffer, MAXLINE,
+                 MSG_WAITALL, (struct sockaddr *)&cliaddr,
+                 &len);
 
-        client.ParseFromString(buffer);
+        remoteMethod = buffer;
+        remoteMethod = remoteMethod[remoteMethod.find(",") + 1];
 
-        std::cout << "Client : {id: " << client.id() << ", nome: " << client.nome() << "}" << std::endl;
+        response = dispatch.invoke(buffer, remoteMethod);
 
-        sendResponse();
+        sendResponse(response);
     }
 }
 
-void Server::sendResponse()
+void Server::sendResponse(std::string response)
 {
-    std::string response = "ok";
     socklen_t len = sizeof(cliaddr);
 
     sendto(sockfd, (const char *)response.c_str(), response.size(),

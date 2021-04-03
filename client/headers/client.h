@@ -16,6 +16,5 @@
 class Client
 {
 public:
-    void sendRequest(std::string);
-    std::string getResponse();
+    std::string sendRequest(std::string);
 };

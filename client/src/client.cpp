@@ -1,9 +1,10 @@
 #include "../headers/client.h"
 
-void Client::sendRequest(std::string msg)
+std::string Client::sendRequest(std::string msg)
 {
     int sockfd;
-    char buffer[MAXLINE];
+    std::string buffer;
+    // char buffer[MAXLINE];
     struct sockaddr_in servaddr;
 
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -27,12 +28,13 @@ void Client::sendRequest(std::string msg)
 
     printf("Hello message sent.\n");
 
-    n = recvfrom(sockfd, (char *)buffer, MAXLINE,
+    n = recvfrom(sockfd, (char *)buffer.c_str(), MAXLINE,
                  MSG_WAITALL, (struct sockaddr *)&servaddr,
                  &len);
-    buffer[n] = '\0';
 
-    printf("Server : %s\n", buffer);
+    std::cout << "buffer: " << buffer << std::endl;
 
     close(sockfd);
+
+    return buffer;
 }
